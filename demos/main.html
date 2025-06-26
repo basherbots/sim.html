@@ -24,6 +24,9 @@
         <div class="terminal-container">
           <table id="tty" class="terminal" cellpadding="0" cellspacing="0"></table>
           <div class="controls">
+            <input type="text" id="smartwatch_input" placeholder="Type here..." />
+            <button onclick="sendSmartwatchCommand()">Send</button>
+            
             <form style="display: inline;">
               <select id="fpsselect" onchange='jor1k.framebuffer.SetFPS(this.options[this.selectedIndex].value)'>
                 <option value="0">0 FPS</option>
@@ -258,6 +261,18 @@
       
       jor1k = new Jor1k(jor1kparameters);
       
+      // --- Add this new code to handle the 'run' parameter ---
+      const commandToRun = getQueryVariable("run");
+      if (commandToRun) {
+        // Wait for the emulator to be ready before sending the command.
+        // A timeout is a simple way to do this.
+        setTimeout(() => {
+          let command = decodeURIComponent(commandToRun) + '\n';
+          for (let i = 0; i < command.length; i++) {
+            jor1k.term.PutChar(command.charCodeAt(i));
+          }
+        }, 5000); // 5-second delay; adjust as needed
+      }
     }
     
     /**

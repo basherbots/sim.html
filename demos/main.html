@@ -260,19 +260,6 @@
       // --------------------------------------------------------
       
       jor1k = new Jor1k(jor1kparameters);
-      
-      // --- Add this new code to handle the 'run' parameter ---
-      const commandToRun = getQueryVariable("run");
-      if (commandToRun) {
-        // Wait for the emulator to be ready before sending the command.
-        // A timeout is a simple way to do this.
-        setTimeout(() => {
-          let command = decodeURIComponent(commandToRun) + '\n';
-          for (let i = 0; i < command.length; i++) {
-            jor1k.term.PutChar(command.charCodeAt(i));
-          }
-        }, 5000); // 5-second delay; adjust as needed
-      }
     }
     
     /**
@@ -434,6 +421,29 @@
       
       titleBar.querySelector('.title-bar-controls').appendChild(minimizeButton);
     });    
+
+function sendSmartwatchCommand() {
+  const inputElement = document.getElementById("smartwatch_input");
+  let command = inputElement.value;
+
+  if (command) {
+    let charsToSend = [];
+    // Convert the command string into an array of character codes
+    for (let i = 0; i < command.length; i++) {
+      charsToSend.push(command.charCodeAt(i));
+    }
+    // Add the Enter key (ASCII 13) to execute the command
+    charsToSend.push(13);
+
+    // Use the jor1k.SendChars function to send the characters to the active terminal
+    // The 'jor1k' object is globally available after Start() is called.
+    jor1k.SendChars(charsToSend);
+
+    // Clear the input box after sending
+    inputElement.value = "";
+  }
+}
+
   </script>
   
   
